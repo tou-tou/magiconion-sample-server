@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <LangVersion>default</LangVersion> <!-- コンパイラのバージョンに合わせて言語バージョンを選んでくれる UnityではC#9.0 サーバーではc#12を選んでほしい-->
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MagicOnion.Abstractions" Version="5.1.8" />
+    <PackageReference Include="MessagePack" Version="2.5.124" />
+    <PackageReference Include="MessagePack.UnityShims" Version="2.5.124" />
+  </ItemGroup>
+
+</Project>
