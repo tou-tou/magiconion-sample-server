@@ -37,6 +37,7 @@ public class GamingHub : StreamingHubBase<IGamingHub, IGamingHubReceiver>, IGami
     {
         self.Position = position;
         self.Rotation = rotation;
+        Console.WriteLine($"MoveAsync: {self.Name} pos:{position.x} {position.y} {position.z} rot:{rotation.x} {rotation.y} {rotation.z} {rotation.w}");
         Broadcast(room).OnMove(self);
     }
 
