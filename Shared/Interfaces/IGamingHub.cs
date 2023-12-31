@@ -1,4 +1,5 @@
-﻿using MagicOnion;
+﻿using System.Threading.Tasks;
+using MagicOnion;
 using MessagePack;
 using UnityEngine;
 
