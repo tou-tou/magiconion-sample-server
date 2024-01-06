@@ -21,7 +21,7 @@ internal static class Program
             });
             
             // HTTP/1.1エンドポイントの設定
-            options.Listen(IPAddress.Parse("0.0.0.0"), 8000, listenOptions =>
+            options.Listen(IPAddress.Parse("0.0.0.0"), 8888, listenOptions =>
             {
                 listenOptions.Protocols = HttpProtocols.Http1;
             });
