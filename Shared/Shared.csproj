@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <LangVersion>default</LangVersion> <!-- コンパイラのバージョンに合わせて言語バージョンを選んでくれる UnityではC#9.0 サーバーではc#12を選んでほしい-->
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>9.0</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
