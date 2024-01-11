@@ -21,13 +21,13 @@ internal static class Program
             });
             
             // HTTP/1.1エンドポイントの設定
-            options.Listen(IPAddress.Parse("0.0.0.0"), 8888, listenOptions =>
+            options.Listen(IPAddress.Parse("0.0.0.0"), 5000, listenOptions =>
             {
                 listenOptions.Protocols = HttpProtocols.Http1;
             });
             
             // HTTP/2 ,HTTPS エンドポイントの設定
-            options.Listen(IPAddress.Parse("0.0.0.0"),5000, listenOptions =>
+            options.Listen(IPAddress.Parse("0.0.0.0"),5001, listenOptions =>
             {
                 // --load-cert=true が指定されていたら証明書を読み込む
                 if (args.Any(arg => arg == "--load-cert=true"))
