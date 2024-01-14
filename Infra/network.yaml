@@ -1,0 +1,25 @@
+﻿resources:
+  # Network
+  - name: onion-network
+    type: compute.v1.network
+    properties:
+      autoCreateSubnetworks: false
+
+  # Subnetwork
+  - name: onion-subnet
+    type: compute.v1.subnetwork
+    properties:
+      region: asia-northeast1
+      ipCidrRange: 10.0.0.0/24
+      network: $(ref.onion-network.selfLink)
+
+  # Firewall for MagicOnion Server
+  - name: server-firewall
+    type: compute.v1.firewall
+    properties:
+      network: $(ref.onion-network.selfLink)
+      sourceRanges: [ "0.0.0.0/0" ]
+      allowed:
+        - IPProtocol: TCP
+          ports: [ '5000', '5001', '5002', '22', '5555', '5556' ]
+

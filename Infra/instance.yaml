@@ -1,0 +1,54 @@
+resources:
+
+  # Instance Template
+  - name: instance-template
+    type: compute.v1.instanceTemplate
+    properties:
+      properties:
+        machineType: n1-standard-1
+        minCpuPlatform: "Intel Skylake"
+        serviceAccounts:
+          - email: default
+            scopes:
+              - https://www.googleapis.com/auth/cloud-platform
+        scheduling:
+          preemptible: true
+        disks:
+          - deviceName: boot
+            boot: true
+            autoDelete: true
+            initializeParams:
+              sourceImage: projects/cos-cloud/global/images/family/cos-stable
+        networkInterfaces:
+          - subnetwork: projects/magiconion-load-test/regions/asia-northeast1/subnetworks/onion-subnet
+            networkIP: 10.0.0.10 # MagicOnion ServerのIPアドレスを固定
+            accessConfigs:
+              - name: External NAT
+                type: ONE_TO_ONE_NAT
+                networkTier: PREMIUM
+        metadata:
+          items:
+            - key: gce-container-declaration
+              value: |
+                spec:
+                  containers:
+                    - name: 'onion-server-container'
+                      image: 'asia-northeast1-docker.pkg.dev/magiconion-load-test/onion-server/onion-server:latest'
+
+  # Instance Group Manager
+  - name: instance-group-1-manager
+    type: compute.v1.instanceGroupManager
+    properties:
+      zone: asia-northeast1-a
+      instanceTemplate: $(ref.instance-template.selfLink)
+      targetSize: 1
+
+  # Autoscaler
+  - name: instance-group-1-autoscaler
+    type: compute.v1.autoscaler
+    properties:
+      zone: asia-northeast1-a
+      target: $(ref.instance-group-1-manager.selfLink)
+      autoscalingPolicy:
+        maxNumReplicas: 1
+        minNumReplicas: 0

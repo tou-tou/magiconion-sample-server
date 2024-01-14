@@ -1,0 +1,18 @@
+[ req ]
+default_bits       = 4096
+default_md         = sha256
+prompt             = no
+encrypt_key        = no
+distinguished_name = dn
+
+[ dn ]
+CN=dummy.example.com
+
+[ ext ]
+basicConstraints=CA:FALSE
+keyUsage=digitalSignature, keyEncipherment
+subjectAltName=@alt_names
+
+[ alt_names ]
+DNS.1=dummy.example.com
+DNS.2=www.dummy.example.com
