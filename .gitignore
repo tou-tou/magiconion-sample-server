@@ -478,4 +478,8 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
+# cert
 *.pem
+*.key
+*.pfx
