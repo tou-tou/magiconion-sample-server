@@ -1,0 +1,97 @@
+resources:
+  - name: onion-network
+    type: compute.v1.network
+    properties:
+      autoCreateSubnetworks: false
+
+  # MagicOnion用Subnetwork
+  - name: onion-subnet
+    type: compute.v1.subnetwork
+    properties:
+      region: asia-northeast1
+      ipCidrRange: 10.0.0.0/24
+      network: $(ref.onion-network.selfLink)
+
+  # MagicOnion Serverの 5000,5001,5002
+  - name: server-firewall
+    type: compute.v1.firewall
+    properties:
+      network: $(ref.onion-network.selfLink)
+      sourceRanges: [ "0.0.0.0/0" ]
+      allowed:
+        - IPProtocol: TCP
+          ports: [ '5000','5001','5002' ]
+
+#   インスタンスへのSSH
+#   ssh 接続したいときのみ手動で GCP のコンソールから firewall 開ける運用にする
+#   もしくは sourceRanges を自分の IP に限定する
+#  - name: ssh-firewall
+#    type: compute.v1.firewall
+#    properties:
+#      network: $(ref.onion-network.selfLink)
+#      sourceRanges: [ "192.168.0.1/32" ] # アクセス元のIPを制限する
+#      allowed:
+#        - IPProtocol: TCP
+#          ports: [ "22" ]
+  
+  - name: instance-template
+    type: compute.v1.instanceTemplate
+    properties:
+      properties:
+        machineType: n1-standard-1
+        minCpuPlatform: "Intel Skylake"
+        serviceAccounts:
+          - email: default
+            scopes:
+              - https://www.googleapis.com/auth/cloud-platform
+        selfLink: https://compute.googleapis.com/compute/v1/projects/magiconion-sample/global/instanceTemplates/instance-template
+        scheduling:
+          preemptible: true
+        disks:
+          - deviceName: boot
+            boot: true
+            autoDelete: true
+            initializeParams:
+              sourceImage: projects/cos-cloud/global/images/family/cos-stable
+        networkInterfaces:
+          - network: $(ref.onion-network.selfLink)
+            subnetwork: $(ref.onion-subnet.selfLink)
+            accessConfigs:
+              - name: External NAT
+                type: ONE_TO_ONE_NAT
+        metadata:
+          items:
+            - key: gce-container-declaration
+              value: |
+                spec:
+                  containers:
+                    - name: 'onion-server-container'
+                      image: 'asia-northeast1-docker.pkg.dev/magiconion-sample/onion-server/onion-server:latest'
+                      stdin: false
+                      tty: false
+                  restartPolicy: Always
+          dependsOn:
+            - onion-network
+            - onion-subnet
+  
+#  - name: instance-group-1-manager
+#    type: compute.v1.instanceGroupManager
+#    properties:
+#      zone: asia-northeast1-a
+#      instanceTemplate: projects/magiconion-sample/global/instanceTemplates/instance-template
+#      targetSize: 1
+#      metadata:
+#        dependsOn:
+#          - instance-template
+#
+#  - name: instance-group-1-autoscaler
+#    type: compute.v1.autoscaler
+#    properties:
+#      zone: asia-northeast1-a
+#      target: $(ref.instance-group-1-manager.selfLink)
+#      autoscalingPolicy:
+#        maxNumReplicas: 1
+#        minNumReplicas: 0
+#      metadata:
+#        dependsOn:
+#          - instance-group-1-manager

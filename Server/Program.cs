@@ -28,7 +28,7 @@ internal static class Program
         //         if (args.Any(arg => arg == "--load-cert=true"))
         //         {
         //             Console.WriteLine("load certificate");
-        //             listenOptions.UseHttps(new X509Certificate2("certificate/server.pfx", ""));
+        //             listenOptions.UseHttps(new X509Certificate2("certificate/server.pfx", "test"));
         //             listenOptions.Protocols = HttpProtocols.Http1AndHttp2;
         //         }
         //     });

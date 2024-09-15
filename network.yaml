@@ -1,0 +1,34 @@
+resources:
+  - name: onion-network
+    type: compute.v1.network
+    properties:
+      name: onion-network
+      autoCreateSubnetworks: false
+  
+  # MagicOnion用Subnetwork
+  - name: onion-subnet
+    type: compute.v1.subnetwork
+    properties:
+      region: asia-northeast1
+      ipCidrRange: 10.0.0.0/24
+      network: $(ref.load-network.selfLink)
+  
+  # MagicOnion Serverの 5000,5001,5002
+  - name: server-firewall
+    type: compute.v1.firewall
+    properties:
+      network: $(ref.onion-network.selfLink)
+      sourceRanges: ["0.0.0.0/0"]
+      allowed:
+        - IPProtocol: TCP
+          ports: ['5000','5001','5002']
+
+  # インスタンスへのSSH
+  - name: ssh-firewall
+    type: compute.v1.firewall
+    properties:
+      network: $(ref.onion-network.selfLink)
+      sourceRanges: ["0.0.0.0/0"]
+      allowed:
+        - IPProtocol: TCP
+          ports: ["22"]
