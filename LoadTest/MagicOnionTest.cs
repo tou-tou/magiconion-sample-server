@@ -9,21 +9,42 @@ public class MagicOnionStreamingHubTest : Workload, IGamingHubReceiver
     DateTime beginTime;
     DateTime endTime;
     int executeCount;
+    private int _roomCount;
+    private string _roomName;
+    
     GrpcChannel channel = default!;
     IGamingHub client = default!;
-
+    
+    public MagicOnionStreamingHubTest(int roomCount)
+    {
+        _roomCount = roomCount;
+    }
+    
+    // workloadIdを元に部屋を割り当てる
+    // ただし、均等に割り当てることを保証しない
+    private string AllocateRoom(string workerId)
+    {
+        int hash = workerId.GetHashCode();
+        int roomIndex = Math.Abs(hash) % _roomCount;
+        return "room_" + roomIndex;
+    }
+    
     public override async Task SetupAsync(WorkloadContext context)
     {
+        var workloadId = context.WorkloadId.ToString();
+        
         beginTime = DateTime.Now;
-        channel = GrpcChannel.ForAddress("http://localhost:5059");
+        channel = GrpcChannel.ForAddress("http://dummy.example.com:5000");
         client = await StreamingHubClient.ConnectAsync<IGamingHub, IGamingHubReceiver>(channel, this);
-        await client.JoinAsync("room", "user", new UnityEngine.Vector3(), new UnityEngine.Quaternion());
+        
+        _roomName = AllocateRoom(workloadId);
+        await client.JoinAsync(_roomName, "user_" + workloadId, new UnityEngine.Vector3(), new UnityEngine.Quaternion());
         endTime = DateTime.Now;
-        executeCount++;
     }
 
     public override async Task ExecuteAsync(WorkloadContext context)
     {
+        executeCount++;
         await client.MoveAsync(new UnityEngine.Vector3(), new UnityEngine.Quaternion());
     }
 
@@ -47,7 +68,7 @@ public class MagicOnionStreamingHubTest : Workload, IGamingHubReceiver
 
     public void OnMove(Player player)
     {
-        //Console.WriteLine("Move Player:" + player.Name);
+        Console.WriteLine("Move Player:" + player.Name);
     }
     
     public override Dictionary<string, string>? Complete(WorkloadContext context)
@@ -57,6 +78,10 @@ public class MagicOnionStreamingHubTest : Workload, IGamingHubReceiver
             { "begin", beginTime.ToString() },
             { "end", endTime.ToString() },
             { "count", executeCount.ToString() },
+            {"workloadId", context.WorkloadId.ToString()},
+            {"workloadIndex", context.WorkloadIndex.ToString()},
+            {"ExecuteCount", executeCount.ToString()},
+            {"RoomName", _roomName},
         };
     }
 }

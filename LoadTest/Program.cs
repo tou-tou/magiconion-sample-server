@@ -4,10 +4,10 @@ using DFrame;
 using Microsoft.Extensions.DependencyInjection;
 using System.Buffers;
 
-var builder = DFrameApp.CreateBuilder(7312, 7313);
+var builder = DFrameApp.CreateBuilder(5555, 5556);
 builder.ConfigureWorker(options =>
 {
-    options.VirtualProcess = 32;
+    options.VirtualProcess = 4;
     options.Metadata = new()
     {
         { "MachineName", Environment.MachineName },
@@ -29,5 +29,5 @@ else if (args[0] == "worker")
 {
     // worker connect to (controller) address.
     // You can also configure from appsettings.json via builder.ConfigureWorker((ctx, options) => { options.ControllerAddress = "" });
-    await builder.RunWorkerAsync("http://foobar:5556");
+    await builder.RunWorkerAsync("http://localhost:5556");
 }

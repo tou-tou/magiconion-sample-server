@@ -13,30 +13,6 @@ internal static class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-        
-        // appsettings.json を設定していない場合はコメントアウト
-        // builder.WebHost.ConfigureKestrel(options =>
-        // {
-        //     // HTTP/2 Only のエンドポイント（not HTTPS）
-        //     options.Listen(IPAddress.Parse("0.0.0.0"), 5000,
-        //         listenOptions => { listenOptions.Protocols = HttpProtocols.Http2; });
-        //
-        //     // HTTP/2 ,HTTPS エンドポイントの設定
-        //     options.Listen(IPAddress.Parse("0.0.0.0"), 5001, listenOptions =>
-        //     {
-        //         // --load-cert=true が指定されていたら証明書を読み込む
-        //         if (args.Any(arg => arg == "--load-cert=true"))
-        //         {
-        //             Console.WriteLine("load certificate");
-        //             listenOptions.UseHttps(new X509Certificate2("certificate/server.pfx", "test"));
-        //             listenOptions.Protocols = HttpProtocols.Http1AndHttp2;
-        //         }
-        //     });
-        //
-        //     // 疎通確認用のHTTP 1.1エンドポイントの設定
-        //     options.Listen(IPAddress.Parse("0.0.0.0"), 5002,
-        //         listenOptions => { listenOptions.Protocols = HttpProtocols.Http1; });
-        // });
 
         builder.Services.AddGrpc();
         builder.Services.AddMagicOnion();
