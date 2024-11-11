@@ -1,4 +1,5 @@
-﻿using DFrame;
+﻿using System.Diagnostics;
+using DFrame;
 using Grpc.Net.Client;
 using MagicOnion.Client;
 using Shared.Interfaces;
@@ -10,14 +11,17 @@ public class MagicOnionStreamingHubTest : Workload, IGamingHubReceiver
     DateTime endTime;
     int executeCount;
     private int _roomCount;
+    private int _interval;
+    private Random _random;
     private string _roomName;
     
     GrpcChannel channel = default!;
     IGamingHub client = default!;
     
-    public MagicOnionStreamingHubTest(int roomCount)
+    public MagicOnionStreamingHubTest(int roomCount, int interval)
     {
         _roomCount = roomCount;
+        _interval = interval;
     }
     
     // workloadIdを元に部屋を割り当てる
@@ -38,14 +42,25 @@ public class MagicOnionStreamingHubTest : Workload, IGamingHubReceiver
         client = await StreamingHubClient.ConnectAsync<IGamingHub, IGamingHubReceiver>(channel, this);
         
         _roomName = AllocateRoom(workloadId);
+        _random = new Random();
+        
         await client.JoinAsync(_roomName, "user_" + workloadId, new UnityEngine.Vector3(), new UnityEngine.Quaternion());
-        endTime = DateTime.Now;
     }
 
     public override async Task ExecuteAsync(WorkloadContext context)
     {
+        var stopWatch = Stopwatch.StartNew();
         executeCount++;
-        await client.MoveAsync(new UnityEngine.Vector3(), new UnityEngine.Quaternion());
+        
+        var randomVector = new UnityEngine.Vector3(_random.Next(0, 100), _random.Next(0, 100), _random.Next(0, 100));
+        var randomRotation = new UnityEngine.Quaternion(_random.Next(0, 100), _random.Next(0, 100), _random.Next(0, 100), _random.Next(0, 100));
+        await client.MoveAsync(randomVector, randomRotation);
+        stopWatch.Stop();
+        
+        var elapseMs = stopWatch.ElapsedMilliseconds;
+        var delayMs = _interval - elapseMs;
+        
+        if (delayMs > 0) await Task.Delay((int)delayMs);
     }
 
     public override async Task TeardownAsync(WorkloadContext context)
@@ -54,6 +69,7 @@ public class MagicOnionStreamingHubTest : Workload, IGamingHubReceiver
         await client.DisposeAsync();
         await channel.ShutdownAsync();
         channel.Dispose();
+        endTime = DateTime.Now;
     }
 
     public void OnJoin(Player player)
@@ -68,7 +84,6 @@ public class MagicOnionStreamingHubTest : Workload, IGamingHubReceiver
 
     public void OnMove(Player player)
     {
-        Console.WriteLine("Move Player:" + player.Name);
     }
     
     public override Dictionary<string, string>? Complete(WorkloadContext context)
