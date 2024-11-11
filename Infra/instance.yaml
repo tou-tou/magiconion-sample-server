@@ -33,7 +33,7 @@ resources:
                 spec:
                   containers:
                     - name: 'onion-server-container'
-                      image: 'asia-northeast1-docker.pkg.dev/magiconion-load-test/onion-server/onion-server:6.0'
+                      image: 'asia-northeast1-docker.pkg.dev/magiconion-load-test/onion-server/onion-server:9.0'
 
   # Instance Group Manager
   - name: instance-group-1-manager
