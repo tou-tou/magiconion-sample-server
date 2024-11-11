@@ -23,7 +23,7 @@
 #    args:
 #      - 'build'
 #      - '-t'
-#      - 'asia-northeast1-docker.pkg.dev/magiconion-load-test/onion-server/onion-server:latest'
+#      - 'asia-northeast1-docker.pkg.dev/magiconion-load-test/onion-server/onion-server:6.0'
 #      - '-f'
 #      - 'Server/Dockerfile'
 #      - '.'
@@ -33,10 +33,10 @@
 #  - name: 'gcr.io/cloud-builders/docker'
 #    args:
 #      - 'push'
-#      - 'asia-northeast1-docker.pkg.dev/magiconion-load-test/onion-server/onion-server:latest'
+#      - 'asia-northeast1-docker.pkg.dev/magiconion-load-test/onion-server/onion-server:6.0'
 #    id: 'push-server-image'
 #    waitFor: ['build-server-image']
-#  
+#
 #  # ネットワークリソースをデプロイまたはアップデート
 #  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
 #    entrypoint: 'sh'
