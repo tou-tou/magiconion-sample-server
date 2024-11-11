@@ -1,54 +1,54 @@
 ﻿steps:
-  # Dframe worker/controller Dockerイメージをビルド
-  - name: 'gcr.io/cloud-builders/docker'
-    args:
-      - 'build'
-      - '-t'
-      - 'asia-northeast1-docker.pkg.dev/magiconion-load-test/dframe/dframe:latest'
-      - '-f'
-      - 'LoadTest/Dockerfile'
-      - '.'
-    id: 'build-dframe-image'
-
-  # Dframe DockerイメージをArtifact Registryにプッシュ
-  - name: 'gcr.io/cloud-builders/docker'
-    args:
-      - 'push'
-      - 'asia-northeast1-docker.pkg.dev/magiconion-load-test/dframe/dframe:latest'
-    id: 'push-dframe-image'
-    waitFor: ['build-dframe-image']
-
-  # magiconionサーバーDockerイメージをビルド
-  - name: 'gcr.io/cloud-builders/docker'
-    args:
-      - 'build'
-      - '-t'
-      - 'asia-northeast1-docker.pkg.dev/magiconion-load-test/onion-server/onion-server:latest'
-      - '-f'
-      - 'Server/Dockerfile'
-      - '.'
-    id: 'build-server-image'
-
-  # magiconionサーバーDockerイメージをArtifact Registryにプッシュ
-  - name: 'gcr.io/cloud-builders/docker'
-    args:
-      - 'push'
-      - 'asia-northeast1-docker.pkg.dev/magiconion-load-test/onion-server/onion-server:latest'
-    id: 'push-server-image'
-    waitFor: ['build-server-image']
-  
-  # ネットワークリソースをデプロイまたはアップデート
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-    entrypoint: 'sh'
-    args:
-      - '-c'
-      - |
-        if gcloud deployment-manager deployments describe network-deployment --project=magiconion-load-test; then
-          gcloud deployment-manager deployments update network-deployment --config ./Infra/network.yaml --project=magiconion-load-test
-        else
-          gcloud deployment-manager deployments create network-deployment --config ./Infra/network.yaml --project=magiconion-load-test
-        fi
-    id: 'deploy-network'
+#  # Dframe worker/controller Dockerイメージをビルド
+#  - name: 'gcr.io/cloud-builders/docker'
+#    args:
+#      - 'build'
+#      - '-t'
+#      - 'asia-northeast1-docker.pkg.dev/magiconion-load-test/dframe/dframe:latest'
+#      - '-f'
+#      - 'LoadTest/Dockerfile'
+#      - '.'
+#    id: 'build-dframe-image'
+#
+#  # Dframe DockerイメージをArtifact Registryにプッシュ
+#  - name: 'gcr.io/cloud-builders/docker'
+#    args:
+#      - 'push'
+#      - 'asia-northeast1-docker.pkg.dev/magiconion-load-test/dframe/dframe:latest'
+#    id: 'push-dframe-image'
+#    waitFor: ['build-dframe-image']
+#
+#  # magiconionサーバーDockerイメージをビルド
+#  - name: 'gcr.io/cloud-builders/docker'
+#    args:
+#      - 'build'
+#      - '-t'
+#      - 'asia-northeast1-docker.pkg.dev/magiconion-load-test/onion-server/onion-server:latest'
+#      - '-f'
+#      - 'Server/Dockerfile'
+#      - '.'
+#    id: 'build-server-image'
+#
+#  # magiconionサーバーDockerイメージをArtifact Registryにプッシュ
+#  - name: 'gcr.io/cloud-builders/docker'
+#    args:
+#      - 'push'
+#      - 'asia-northeast1-docker.pkg.dev/magiconion-load-test/onion-server/onion-server:latest'
+#    id: 'push-server-image'
+#    waitFor: ['build-server-image']
+#  
+#  # ネットワークリソースをデプロイまたはアップデート
+#  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+#    entrypoint: 'sh'
+#    args:
+#      - '-c'
+#      - |
+#        if gcloud deployment-manager deployments describe network-deployment --project=magiconion-load-test; then
+#          gcloud deployment-manager deployments update network-deployment --config ./Infra/network.yaml --project=magiconion-load-test
+#        else
+#          gcloud deployment-manager deployments create network-deployment --config ./Infra/network.yaml --project=magiconion-load-test
+#        fi
+#    id: 'deploy-network'
     
   # インスタンスリソースをデプロイまたはアップデート
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
@@ -62,7 +62,7 @@
           gcloud deployment-manager deployments create instance-deployment --config ./Infra/instance.yaml --project=magiconion-load-test
         fi
     id: 'deploy-instance'
-    waitFor: ['push-dframe-image', 'push-server-image', 'deploy-network']
+#    waitFor: ['push-dframe-image', 'push-server-image', 'deploy-network']
 
 options:
   logging: CLOUD_LOGGING_ONLY
