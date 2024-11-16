@@ -5,7 +5,7 @@ resources:
     type: compute.v1.instanceTemplate
     properties:
       properties:
-        machineType: n1-highcpu-16
+        machineType: n1-standard-1
         minCpuPlatform: "Intel Skylake"
         serviceAccounts:
           - email: default
